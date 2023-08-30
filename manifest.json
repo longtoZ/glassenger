@@ -13,7 +13,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://www.facebook.com/*", "https://www.messenger.com/*"],
+            "matches": ["https://www.facebook.com/messages/*", "https://www.messenger.com/*"],
             "js": ["./scripts/action.js"],
             "css": ["./css/action.css"]
         }

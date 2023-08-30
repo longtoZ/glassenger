@@ -33,7 +33,9 @@ function main() {
     waitForElementToExist('div[role="main"]').then(function() {
         const url = document.baseURI
         console.log(url)
-        if (url.includes('mess')) {
+        if (url.includes('messages')) {
+            fbMessengerSite()
+        } else if (url.includes('messenger')) {
             messengerSite()
         } else {
             facebookSite()
@@ -42,6 +44,69 @@ function main() {
 }
 
 function messengerSite() {
+    document.querySelectorAll('div[dir="auto"]').forEach(i => {
+        if (i.textContent.length>0) {
+            i.parentElement.parentElement.style.background = 'rgba(0,0,0,0.2)'
+            i.parentElement.parentElement.style.borderRadiu = '20px'
+        }
+    })
+
+    // Set background for conversation box 
+    const conversation = document.querySelector('div[role="main"]')
+    const conversationHeader = document.querySelector('div[role="main"]').firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild
+    const conversationType = document.querySelector('div[role="main"]').firstChild.firstChild.firstChild.firstChild.lastChild.firstChild.firstChild.lastChild
+    const stickerBtn = conversationType.querySelectorAll('div[role="button"]')[2]
+    const navigation = document.querySelectorAll('div[role="navigation"]')[0]
+    const navigationSearch = navigation.querySelector('label')
+    const navigationButton = navigation.querySelectorAll('div[role="button"]')
+    const newChatBtn = navigation.querySelector('a[role="link"][href="/new/"]')
+    const mainContainer = conversation.parentElement
+    const messages = document.querySelector('div[role="main"] div[role="grid"]').firstChild.firstChild.firstChild.firstChild.children[2].firstChild
+
+    if (navigationSearch) {
+        navigationSearch.classList.add('navigationSearch')
+    }
+
+    // Update Darkmode on element change
+    updateDarkmode()
+
+    // Update blur background on new messages
+    waitForNewMessage(messages, conversation, conversationHeader, conversationType, navigation)
+
+    // Updated blur background on scroll 
+    conversation.firstChild.firstChild.firstChild.firstChild.lastChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.addEventListener('scroll', () => {
+        handle(conversation, conversationHeader, conversationType, navigation)
+    })
+
+    // Update blur for every button in navigation
+    navigationButton.forEach(i => {
+        i.style.background = 'rgba(0,0,0,0.4)'
+        i.addEventListener('click', handleMenu)
+    })
+
+    // Remove background for profile in navigation
+    navigationButton[1].parentElement.parentElement.parentElement.style.background = 'none'
+
+    navigationSearch.addEventListener('click', function() {
+        waitForElementToExist('ul[role="listbox"]').then(handleSearch)
+    })
+
+    newChatBtn.addEventListener('click', function() {
+        waitForElementToExist('ul[role="listbox"]').then(handleNewChat).then(function() {
+            const newChatSearch = document.querySelector('div[role="presentation"] input')
+            
+            newChatSearch.addEventListener('click', function() {
+                waitForElementToExist('ul[role="listbox"]').then(handleNewChat)
+            })
+        })
+    })
+
+    stickerBtn.addEventListener('click', function() {
+        waitForElementToExist('div[role="dialog"]').then(handleSticker)
+    })
+}
+
+function fbMessengerSite() {
 
     // Set background color to messages box
     document.querySelectorAll('div[dir="auto"]').forEach(i => {
@@ -101,38 +166,6 @@ function messengerSite() {
 
 }
 
-function facebookSite() {
-    // document.querySelectorAll('div[aria-posinset] > div > div > div > div').forEach(i => {
-    //     i.classList.add('post')
-    // })
-
-    document.querySelectorAll('div').forEach(i => {
-        if (i.style.borderRadius.includes('max')) {
-            i.classList.add('post')
-        }
-    })
-
-    if (document.querySelectorAll('div[role="navigation"]')[2]) {
-        const nav = document.querySelectorAll('div[role="navigation"]')[2].querySelector('div > div > div')
-        nav.classList.add('fbNavigation')
-    }
-
-
-    const comp = document.querySelector('div[role="complementary"] > div > div > div')
-    comp.classList.add('fbComplementary')
-
-    const banner = document.querySelectorAll('div[role="navigation"]')[0]
-    banner.parentElement.parentElement.classList.add('fbBanner')
-    banner.parentElement.nextElementSibling.style.display = 'none'
-
-    const story = document.querySelectorAll('div[role="region"]')[0]
-    story.classList.add('fbStory')
-
-    document.querySelector('body').addEventListener('scroll', () => {
-        handleFb()
-    })
-}
-
 function handleSticker() {
     const sticker = document.querySelector('div[role="dialog"]')
 
@@ -150,6 +183,7 @@ function handleMenu() {
         navigationMenu.style.borderRadius = '20px'
         navigationMenu.firstChild.classList.add('navigationMenu')
         navigationMenu.lastChild.style.display = 'none'
+        navigationMenu.parentElement.style.backdropFilter = 'blur(20px)'
     })
 
 }
@@ -171,15 +205,18 @@ function handleNewChat() {
 
 function handle(conversation, conversationHeader, conversationType, navigation) {
     document.querySelectorAll('div:not([role="img"]):not([role="menu"]').forEach(i => {
-        i.classList.add('resetSite')
+        i.classList.add('resetSite')   
     })
 
-    
+    // convert to darkmode
+    document.documentElement.classList.remove('__fb-light-mode')
+    document.documentElement.classList.add('__fb-dark-mode')
+
     conversation.classList.add('conversation')
 
     conversationHeader.classList.add('conversationHeader')
 
-    document.querySelectorAll('div[aria-label][role="main"] span:not([role="gridcell"])').forEach(j => {
+    document.querySelectorAll('div[role="main"] span:not([role="gridcell"])').forEach(j => {
         const dateBreak1 = j.parentElement.hasAttribute('data-scope')
         const dateBreak2 = j.parentElement.parentElement.hasAttribute('data-scope')
         const linkTitle = j.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.hasAttribute('target')
@@ -211,8 +248,6 @@ function handle(conversation, conversationHeader, conversationType, navigation) 
     }
 
 
-
-
     conversationHeader.querySelectorAll('span').forEach(i => {
         if (i.textContent != '') {
             i.style.background = 'none'
@@ -224,17 +259,45 @@ function handle(conversation, conversationHeader, conversationType, navigation) 
     navigation.classList.add('navigation')
 
     navigation.firstChild.firstChild.firstChild.firstChild.style.width = '100%'
+
+    // remove background for names
+    document.querySelectorAll('h4 span').forEach(i => {i.style.background = 'none'})
+
+    // remove background for user profile
+    document.querySelector('div[role="navigation"] div[role="button"]').parentElement.parentElement.parentElement.style.background = 'none'
 }
 
-function handleFb() {
-    document.querySelectorAll('div').forEach(i => {
-        if (i.style.borderRadius.includes('max')) {
-            i.classList.add('post')
-        }
-    })
+function updateDarkmode() {
+    const targetNode = document.body;
 
-    document.querySelectorAll('div[role="article"]').forEach(i => i.lastChild.firstChild.firstChild.firstChild.firstChild.firstChild.style.background = 'rgba(0,0,0,0.4)')
-    document.querySelector('div[role="textbox"]').parentElement.parentElement.parentElement.parentElement.parentElement.style.background = 'rgba(0,0,0,0.4)'
+    // Options for the observer (specify which types of mutations to observe)
+    const config = { childList: true, subtree: true };
+
+    // Callback function to execute when mutations are observed
+    const callback = function(mutationsList, observer) {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                // A new element has been added to the body
+                document.querySelectorAll('div').forEach(i => {
+                    if (i.classList.contains('__fb-light-mode')) {
+                        i.classList.remove('__fb-light-mode')
+                        i.classList.add('__fb-dark-mode')
+                    }
+                })
+
+                if (document.querySelector('div[role="dialog"]')) {
+                    document.querySelector('div[role="dialog"]').classList.add('post')
+                }
+            }
+        }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+
 }
 
 function waitForNewMessage(selector, conversation, conversationHeader, conversationType, navigation) {
@@ -249,6 +312,7 @@ function waitForNewMessage(selector, conversation, conversationHeader, conversat
     })
 }
 
+
 function waitForElementToExist(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector)) {
@@ -257,8 +321,7 @@ function waitForElementToExist(selector) {
   
       const observer = new MutationObserver(() => {
         if (document.querySelector(selector)) {
-          resolve(document.querySelector(selector));
-          observer.disconnect();
+            resolve(document.querySelector(selector))
         }
       });
   
@@ -268,4 +331,3 @@ function waitForElementToExist(selector) {
       });
     });
 }
-

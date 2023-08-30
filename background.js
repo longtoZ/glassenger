@@ -11,6 +11,7 @@ chrome.runtime.onInstalled.addListener(function() {
             console.log('Set data failed')
         }
     })
+
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

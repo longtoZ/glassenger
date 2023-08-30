@@ -7,7 +7,10 @@ const loadBtn = document.querySelector("#load-container")
 
 chrome.storage.sync.get("DATA", function(data)  {
     dataObj = data["DATA"]
-    preview.src = chrome.runtime.getURL(`../img/${dataObj["background-img"]}`)
+    if (dataObj["background-img"] != '') {
+        preview.src = chrome.runtime.getURL(`../img/${dataObj["background-img"]}`)
+        imgInput.value = dataObj["background-img"]
+    }
     if (dataObj["switch"] == "on") {
         modeOn.checked = true
     } else {
@@ -21,6 +24,7 @@ chrome.storage.sync.get("DATA", function(data)  {
 // Update image preview on change
 imgInput.addEventListener('change', function() {
     preview.src = chrome.runtime.getURL(`../img/${this.value}`)
+    imgInput.value = this.value
     dataObj["background-img"] = this.value
 })
 
