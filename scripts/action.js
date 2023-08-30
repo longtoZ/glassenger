@@ -65,6 +65,9 @@ function messengerSite() {
 
     if (navigationSearch) {
         navigationSearch.classList.add('navigationSearch')
+        navigationSearch.addEventListener('click', function() {
+            waitForElementToExist('ul[role="listbox"]').then(handleSearch)
+        })
     }
 
     // Update Darkmode on element change
@@ -78,6 +81,10 @@ function messengerSite() {
         handle(conversation, conversationHeader, conversationType, navigation)
     })
 
+    document.querySelector('.navigation').firstChild.lastChild.firstChild.firstChild.firstChild.firstChild.children[3].firstChild.firstChild.firstChild.firstChild.addEventListener('scroll', ()=> {
+        handle(conversation, conversationHeader, conversationType, navigation)
+    })
+
     // Update blur for every button in navigation
     navigationButton.forEach(i => {
         i.style.background = 'rgba(0,0,0,0.4)'
@@ -87,23 +94,25 @@ function messengerSite() {
     // Remove background for profile in navigation
     navigationButton[1].parentElement.parentElement.parentElement.style.background = 'none'
 
-    navigationSearch.addEventListener('click', function() {
-        waitForElementToExist('ul[role="listbox"]').then(handleSearch)
-    })
 
-    newChatBtn.addEventListener('click', function() {
-        waitForElementToExist('ul[role="listbox"]').then(handleNewChat).then(function() {
-            const newChatSearch = document.querySelector('div[role="presentation"] input')
-            
-            newChatSearch.addEventListener('click', function() {
-                waitForElementToExist('ul[role="listbox"]').then(handleNewChat)
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', function() {
+            waitForElementToExist('ul[role="listbox"]').then(handleNewChat).then(function() {
+                const newChatSearch = document.querySelector('div[role="presentation"] input')
+                
+                newChatSearch.addEventListener('click', function() {
+                    waitForElementToExist('ul[role="listbox"]').then(handleNewChat)
+                })
             })
         })
-    })
+    }
 
-    stickerBtn.addEventListener('click', function() {
-        waitForElementToExist('div[role="dialog"]').then(handleSticker)
-    })
+    if (stickerBtn) {
+        stickerBtn.addEventListener('click', function() {
+            waitForElementToExist('div[role="dialog"]').then(handleSticker)
+        })
+    }
+
 }
 
 function fbMessengerSite() {
@@ -259,12 +268,12 @@ function handle(conversation, conversationHeader, conversationType, navigation) 
     navigation.classList.add('navigation')
 
     navigation.firstChild.firstChild.firstChild.firstChild.style.width = '100%'
+    document.querySelectorAll('div[role="navigation"] div').forEach(i => {
+        i.style.background = 'none'
+    })
 
     // remove background for names
     document.querySelectorAll('h4 span').forEach(i => {i.style.background = 'none'})
-
-    // remove background for user profile
-    document.querySelector('div[role="navigation"] div[role="button"]').parentElement.parentElement.parentElement.style.background = 'none'
 }
 
 function updateDarkmode() {
