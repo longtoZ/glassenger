@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 200px;
+    height: 400px;
+}
+
+.upload-img-preview {
+    width: 100px;
+}

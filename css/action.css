@@ -1,0 +1,137 @@
+:root {
+    --blur-strength-1: blur(15px);
+    --blur-strength-2: blur(8px);
+    --bs-1: rgb(0 0 0 / 40%) 0px 0px 10px;
+    --br-1: 20px;
+    --bg-1: rgba(0, 0, 0, 0.4);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--bg-1);
+    border-radius: var(--br-1);
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+
+.resetSite {
+    background :none !important;
+    color: white;
+    box-shadow: none;
+    border: none !important;
+}
+
+.resetSite::after {
+    border: none !important;
+}
+
+.navigation {
+    /* padding: 10px; */
+    margin: 0 10px;
+    color: white;
+    border-radius: var(--br-1);
+    backdrop-filter: var(--blur-strength-2);
+    box-shadow: var(--bs-1) !important;
+}
+
+.navigationSearch {
+    background: var(--bg-1) !important;
+    box-shadow: var(--bs-1) !important;
+}
+
+.navigationMenu {
+    border-radius: var(--br-1);
+    box-shadow: var(--bs-1) !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.listbox {
+    background: var(--bg-1) !important;
+    backdrop-filter: var(--blur-strength-1);
+    border: none;
+}
+
+.listbox-search {
+    background: var(--bg-1) !important;
+    border: none;
+}
+
+.listbox-search > ul {
+    backdrop-filter: var(--blur-strength-1);
+}
+
+.newChat {
+    background: rgba(0,0,0,0.3) !important;
+    border-radius: var(--br-1);
+    box-shadow: var(--bs-1) !important;
+    margin: 0 10px !important;
+}
+
+.conversation {
+    padding: 10px;
+    margin: 0 10px;
+    color: white;
+    border-radius: var(--br-1);
+    backdrop-filter: var(--blur-strength-2);
+    box-shadow: var(--bs-1) !important;
+}
+
+.conversationType {
+    background: rgba(0,0,0,0.3) !important;
+    border-radius: var(--br-1);
+    box-shadow: rgb(0 0 0 / 40%) 0px 0px 10px !important;
+    margin: 10px;
+}
+
+.conversationHeader {
+    background: rgba(0,0,0,0.3) !important;
+    border-radius: var(--br-1);
+    box-shadow: rgb(0 0 0 / 40%) 0px 0px 10px !important;
+    margin: 10px;
+}
+
+.stickerParent1 {
+    background: var(--bg-1) !important;
+    border-radius: var(--br-1) !important;
+}
+
+.stickerParent2 {
+    backdrop-filter: var(--blur-strength-1) !important;
+    border-radius: var(--br-1) !important;
+}
+
+.post {
+    background: var(--bg-1) !important;
+    backdrop-filter: var(--blur-strength-1);
+}
+
+.fbNavigation, .fbComplementary {
+    background: var(--bg-1) !important;
+    border-radius: var(--br-1);
+    backdrop-filter: var(--blur-strength-1);
+    margin: 10px;
+}
+
+.fbBanner {
+    background: var(--bg-1) !important;
+    backdrop-filter: var(--blur-strength-1);
+    box-shadow: var(--bs-1);
+}
+
+.fbStory {
+    background: var(--bg-1) !important;
+    backdrop-filter: var(--blur-strength-1);
+    border-radius: var(--br-1);
+    padding: 0 10px;
+    margin-bottom: 20px;
+}

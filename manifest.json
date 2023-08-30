@@ -1,0 +1,28 @@
+{
+    "name": "Glassenger",
+    "description": "Glassmorphism for Messenger!",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": ["storage", "tabs", "scripting"],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+        }
+    },
+    "icons": {
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://www.facebook.com/*", "https://www.messenger.com/*"],
+            "js": ["./scripts/action.js"],
+            "css": ["./css/action.css"]
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [{
+        "matches": ["<all_urls>"],
+        "resources": ["action.html", "img/*", "./css/action.css"]
+    }]
+}
