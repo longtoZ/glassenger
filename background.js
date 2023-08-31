@@ -1,16 +1,20 @@
 chrome.runtime.onInstalled.addListener(function() {
     chrome.storage.sync.set({"DATA" : {
         "switch": "off",
-        "background-img": "",
-        "blur-strength": "0",
-        "opacity": "0"
-    }}, () => {
-        if (!chrome.runtime.lastError) {
-            console.log('Set data successfully')
-        } else {
-            console.log('Set data failed')
-        }
-    })
+        "background-img": ""
+    }}, () => {})
+
+    chrome.storage.sync.set({"ADJUSTMENT" : {
+        "blur": "0",
+        "brightness": "1",
+        "contrast": "1",
+        "opacity": "1",
+        "grayscale": "0",
+        "hue-rotate": "0",
+        "invert": "0",
+        "saturate": "1",
+        "sepia": "0"
+    }}, () => {})
 
 })
 

@@ -34,6 +34,21 @@ h1 {
     width: 250px;
 }
 
+#adjustment-container {
+    margin: 20px 0;
+}
+
+#adjustment-container p {
+    text-align: center;
+}
+
+#adjustment-container input {
+    display: block;
+    margin: 0 auto;
+    width: 70%;
+    margin-bottom: 10px;
+}
+
 #load-container button {
     display: block;
     margin: 10px auto;

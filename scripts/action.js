@@ -4,12 +4,26 @@ chrome.storage.sync.get("DATA", function(data)  {
     if (dataObj["switch"] == "on") {
 
         const body = document.querySelector('body')
+        body.style.setProperty('--bg-img', `url('${chrome.runtime.getURL(`../img/${dataObj["background-img"]}`)}')`)
+        chrome.storage.sync.get("ADJUSTMENT", function(data) {
+            adjustmentObj = data["ADJUSTMENT"]
 
-        body.style.backgroundImage = `url('${chrome.runtime.getURL(`../img/${dataObj["background-img"]}`)}')`
-        body.style.backgroundSize = 'cover'
-        body.style.backgroundRepeat = 'no-repeat'
-        body.style.height = '100vh'
-        body.style.overflow = 'hidden'
+            let filterStr = []
+
+            for (const j in adjustmentObj) {
+                if (j=='hue-rotate') {
+                    filterStr.push(`${j}(${ adjustmentObj[j] }deg)`)
+                } else if (j=='blur') {
+                    filterStr.push(`${j}(${ adjustmentObj[j] }px)`)
+                } else {
+                    filterStr.push(`${j}(${ adjustmentObj[j] })`)
+        
+                }
+            }
+        
+            body.style.setProperty('--filter', filterStr.join(' '))
+        })
+
         main()
     
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -55,7 +69,7 @@ function messengerSite() {
     const conversation = document.querySelector('div[role="main"]')
     const conversationHeader = document.querySelector('div[role="main"]').firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.firstChild
     const conversationType = document.querySelector('div[role="main"]').firstChild.firstChild.firstChild.firstChild.lastChild.firstChild.firstChild.lastChild
-    const stickerBtn = conversationType.querySelectorAll('div[role="button"]')[2]
+    const actionBtn = conversationType.querySelectorAll('div[role="button"]')
     const navigation = document.querySelectorAll('div[role="navigation"]')[0]
     const navigationSearch = navigation.querySelector('label')
     const navigationButton = navigation.querySelectorAll('div[role="button"]')
@@ -70,6 +84,7 @@ function messengerSite() {
         })
     }
 
+
     // Update Darkmode on element change
     updateDarkmode()
 
@@ -81,7 +96,7 @@ function messengerSite() {
         handle(conversation, conversationHeader, conversationType, navigation)
     })
 
-    document.querySelector('.navigation').firstChild.lastChild.firstChild.firstChild.firstChild.firstChild.children[3].firstChild.firstChild.firstChild.firstChild.addEventListener('scroll', ()=> {
+    navigation.firstChild.lastChild.firstChild.firstChild.firstChild.firstChild.children[3].firstChild.firstChild.firstChild.firstChild.addEventListener('scroll', ()=> {
         handle(conversation, conversationHeader, conversationType, navigation)
     })
 
@@ -92,7 +107,9 @@ function messengerSite() {
     })
 
     // Remove background for profile in navigation
-    navigationButton[1].parentElement.parentElement.parentElement.style.background = 'none'
+    if (navigationButton[1]) {
+        navigationButton[1].parentElement.parentElement.parentElement.style.background = 'none'
+    }
 
 
     if (newChatBtn) {
@@ -107,10 +124,14 @@ function messengerSite() {
         })
     }
 
-    if (stickerBtn) {
-        stickerBtn.addEventListener('click', function() {
-            waitForElementToExist('div[role="dialog"]').then(handleSticker)
+    // Blur background for sticker and gif
+    if (actionBtn) {
+        actionBtn.forEach(i => {
+            i.addEventListener('click', function() {
+                waitForElementToExist('div[role="dialog"]').then(handleAction)
+            })
         })
+
     }
 
 }
@@ -175,12 +196,12 @@ function fbMessengerSite() {
 
 }
 
-function handleSticker() {
-    const sticker = document.querySelector('div[role="dialog"]')
+function handleAction() {
+    const actionDialog = document.querySelector('div[role="dialog"]')
 
-    sticker.querySelector('svg').style.display = 'none'
-    sticker.firstChild.classList.add('stickerParent1')
-    sticker.classList.add('stickerParent2')
+    actionDialog.querySelector('svg').style.display = 'none'
+    actionDialog.firstChild.classList.add('stickerParent1')
+    actionDialog.classList.add('stickerParent2')
 
 }
 
@@ -225,6 +246,7 @@ function handle(conversation, conversationHeader, conversationType, navigation) 
 
     conversationHeader.classList.add('conversationHeader')
 
+    // Update background for message
     document.querySelectorAll('div[role="main"] span:not([role="gridcell"])').forEach(j => {
         const dateBreak1 = j.parentElement.hasAttribute('data-scope')
         const dateBreak2 = j.parentElement.parentElement.hasAttribute('data-scope')
@@ -250,6 +272,15 @@ function handle(conversation, conversationHeader, conversationType, navigation) 
     if (document.querySelector('div[role="list"]')) {
         document.querySelectorAll('div[role="list"] span').forEach(i => i.style.background = 'none')
         document.querySelector('div[role="list"]').parentElement.previousElementSibling.querySelectorAll('span').forEach(i => {
+            if (i.textContent != '') {
+                i.style.background = 'none'
+            }
+        })
+    }
+
+    // Remove background for text in right sidebar
+    if (conversation.firstChild.firstChild.firstChild.children.length==2) {
+        conversation.firstChild.firstChild.firstChild.lastChild.querySelectorAll('span').forEach(i => {
             if (i.textContent != '') {
                 i.style.background = 'none'
             }
